@@ -1,0 +1,41 @@
+BASE_URL = 'https://www.driveraverages.com'
+
+MAX_TRK_ID = 220
+MAX_CARNO_ID = 566
+MAX_DRV_ID = 4400
+MAX_TEAM_NOW = 3000
+MAX_RACE_NO = 99
+
+nascar_series = {
+    'cup': {
+        'name': 'nascar', 
+        'first_year': '1950', 
+        'series_index': '0'},
+    'xfinity': {
+        'name': 'nascar_xfinityseries', 
+        'first_year': '1982', 
+        'series_index': '5'},
+    'truck': {
+        'name': 'nascar_truckseries', 
+        'first_year': '1995', 
+        'series_index': '7'}
+        }
+
+from get_proxy import working_proxy
+
+import logging
+import colorlog
+
+def make_logger(name: str) -> logging.Logger:
+    root = logging.getLogger()
+    if not root.handlers:
+        handler = colorlog.StreamHandler()
+        handler.setFormatter(colorlog.ColoredFormatter(
+            fmt='%(log_color)s[%(asctime)s] [%(levelname)s] %(message)s',
+            datefmt="%H:%M:%S"
+        ))
+        root.addHandler(handler)
+        root.setLevel(logging.DEBUG)
+    return logging.getLogger(name)
+
+logger = make_logger('nascar-data-scraper')

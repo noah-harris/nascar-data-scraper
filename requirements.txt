@@ -1,0 +1,7 @@
+requests
+python-dotenv
+colorlog
+pandas
+sqlalchemy
+bs4
+colorlog
