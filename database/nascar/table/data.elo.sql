@@ -8,4 +8,4 @@ CREATE TABLE [data].[elo] (
 	[start_elo] FLOAT,
 	[end_elo] INT,
 	PRIMARY KEY(sked_id, drv_id)
-	);
+);

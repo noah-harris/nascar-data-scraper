@@ -1,4 +1,4 @@
-CREATE TABLE [api].[race_result](
+CREATE TABLE [drvavg].[race_result](
 	[sked_id] INT,
 	[year] INT,
 	[series] NVARCHAR(25),
@@ -21,7 +21,7 @@ CREATE TABLE [api].[race_result](
 	[stage_2] INT,
 	[stage_3] INT,
 	[rating] FLOAT
-	);
+);
 
 
 

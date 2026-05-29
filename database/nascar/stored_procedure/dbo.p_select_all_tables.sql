@@ -1,4 +1,4 @@
-CREATE PROCEDURE [p_SelectAllTables]
+CREATE PROCEDURE [p_select_all_tables]
 AS
 BEGIN
 

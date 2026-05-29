@@ -1,0 +1,1 @@
+CREATE SCHEMA [nascar] AUTHORIZATION dbo;
