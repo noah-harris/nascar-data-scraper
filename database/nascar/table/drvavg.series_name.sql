@@ -5,3 +5,4 @@ CREATE TABLE [drvavg].[series_name] (
     [end_date] DATETIME2(0),
     PRIMARY KEY([drvavg_series_id])
     );
+    
