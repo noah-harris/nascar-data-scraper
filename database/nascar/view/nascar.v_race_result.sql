@@ -48,7 +48,7 @@ WITH [CTE_race_result_clean] AS (
             ELSE [rating]
         END
         AS [rating]
-    FROM [api].[race_result]
+    FROM [drvavg].[race_result]
     WHERE 1=1 
         AND CAST([date] AS DATE) <> '1900-01-01'
 )

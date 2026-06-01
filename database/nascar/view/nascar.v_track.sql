@@ -8,14 +8,14 @@ SELECT
 	ti.[length],
 	ti.[length_units],
 	ti.[turns],
-	ti.[effective_start_date],
-	ti.[effective_end_date],
+	ti.[start_date],
+	ti.[end_date],
 	ti.[longitude],
 	ti.[latitude]
 FROM [drvavg].[track] AS t
 LEFT JOIN [data].[track_info] AS ti ON ti.[trk_id] = t.[trk_id]
 LEFT JOIN [drvavg].[track_type] AS tt ON ti.[trk_type_id] = tt.[trk_type_id]
 WHERE 1=1 
-    AND [name] <> 'NASCAR Race Statistics at'
+    AND t.[name] <> 'NASCAR Race Statistics at'
 
 

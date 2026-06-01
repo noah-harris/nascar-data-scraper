@@ -1,52 +1,52 @@
-CREATE OR ALTER VIEW [data].[v_all]
-	AS
-SELECT 
-	ei.[sked_id], 
-	ei.[year], 
-	ei.[series], 
-	ei.[race_no], 
-	ei.[event_name], 
-	ei.[event_info], 
-	ei.[date],
-	ei.[trk_id], 
-	ei.[name] AS [track_name], 
-	ei.[trk_type_id],
-	ei.[track_type],
-	ei.[length],
-	ei.[length_units],
-	ei.[turns],
-	ei.[latitude],
-	ei.[longitude],
-	r.[team_name],
-	cn.[carno_id],
-	cn.[car_number],
-	r.[make],
-	cg.[generation],
-	di.[drv_id],
-	di.[name],
-	di.[birthday],
-	di.[deathday],
-	DATEDIFF(YEAR, di.[birthday], ei.[date]) AS [age],
-	r.[start],
-	r.[finish],
-	r.[position_delta],
-	r.[laps_down],
-	r.[status],
-	r.[laps],
-	r.[laps_led],
-	r.[pts],
-	r.[stage_1],
-	r.[stage_2],
-	r.[stage_3],
-	r.[rating],
-	r.[start_elo],
-	r.[end_elo],
-	r.[elo_change]
-FROM [data].[v_result_info] AS r
-LEFT JOIN [data].[v_event_info] AS ei ON ei.[sked_id] = r.[sked_id]
-LEFT JOIN [data].[v_driver_info] AS di ON di.[drv_id] = r.[drv_id]
-LEFT JOIN [api].[car_number] AS cn ON cn.[carno_id] = r.[carno_id]
-LEFT JOIN [data].[car_gen] AS cg
-ON 1=1 
-	AND ei.[date] BETWEEN cg.[effective_start_date] AND cg.[effective_end_date]
-	AND cg.[series] = ei.[series]
+-- CREATE OR ALTER VIEW [data].[v_all]
+-- 	AS
+-- SELECT 
+-- 	ei.[sked_id], 
+-- 	ei.[year], 
+-- 	ei.[series], 
+-- 	ei.[race_no], 
+-- 	ei.[event_name], 
+-- 	ei.[event_info], 
+-- 	ei.[date],
+-- 	ei.[trk_id], 
+-- 	ei.[name] AS [track_name], 
+-- 	ei.[trk_type_id],
+-- 	ei.[track_type],
+-- 	ei.[length],
+-- 	ei.[length_units],
+-- 	ei.[turns],
+-- 	ei.[latitude],
+-- 	ei.[longitude],
+-- 	r.[team_name],
+-- 	cn.[carno_id],
+-- 	cn.[car_number],
+-- 	r.[make],
+-- 	cg.[generation],
+-- 	di.[drv_id],
+-- 	di.[name],
+-- 	di.[birthday],
+-- 	di.[deathday],
+-- 	DATEDIFF(YEAR, di.[birthday], ei.[date]) AS [age],
+-- 	r.[start],
+-- 	r.[finish],
+-- 	r.[position_delta],
+-- 	r.[laps_down],
+-- 	r.[status],
+-- 	r.[laps],
+-- 	r.[laps_led],
+-- 	r.[pts],
+-- 	r.[stage_1],
+-- 	r.[stage_2],
+-- 	r.[stage_3],
+-- 	r.[rating],
+-- 	r.[start_elo],
+-- 	r.[end_elo],
+-- 	r.[elo_change]
+-- FROM [data].[v_result_info] AS r
+-- LEFT JOIN [data].[v_event_info] AS ei ON ei.[sked_id] = r.[sked_id]
+-- LEFT JOIN [data].[v_driver_info] AS di ON di.[drv_id] = r.[drv_id]
+-- LEFT JOIN [api].[car_number] AS cn ON cn.[carno_id] = r.[carno_id]
+-- LEFT JOIN [data].[car_gen] AS cg
+-- ON 1=1 
+-- 	AND ei.[date] BETWEEN cg.[effective_start_date] AND cg.[effective_end_date]
+-- 	AND cg.[series] = ei.[series]

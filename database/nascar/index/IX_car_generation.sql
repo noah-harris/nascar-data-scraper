@@ -1,0 +1,1 @@
+CREATE CLUSTERED INDEX IX_car_generation ON [drvavg].[car_generation]([drvavg_series_id], [start_date]);

@@ -7,5 +7,4 @@ SELECT
 	di.[deathday]
 FROM [drvavg].[driver] AS d
 LEFT JOIN [data].[driver_info] AS di ON di.[drv_id] = d.[drv_id]
-WHERE 1=1 
-    AND [name] <> 'NASCAR Statistics'
+WHERE d.[name] <> 'NASCAR Statistics'
