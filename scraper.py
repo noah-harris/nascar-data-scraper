@@ -4,91 +4,95 @@ from datetime import datetime
 from config import *
 from db import get_connection
 import pandas as pd
-
-
+from util import get_sked_info, get_series_info
 
 def get_sked_ids() -> list:
+    # SkedId Format
+    # YYYYSRR
+    # YYYY - Year - :4
+    # S - Series Index - 4
+    # RR - Race Number - 5:7
     sked_ids = []
-    for series in nascar_series.values():
-        series_index = series.get('series_index')
-        current_year = int(datetime.now().year)
-        first_year = int(series.get('first_year'))
-        for year in range(current_year-first_year+1):
-            year = year + first_year
-            for race_no in range(MAX_RACE_NO):
-                sked_id = str(year)+str(series_index)+str(race_no+1).zfill(2)
+    with get_connection() as conn:
+        nascar_series = pd.read_sql_query('SELECT [drvavg_series_id], YEAR([start_date]) AS [first_year] FROM [drvavg].[series]', conn).to_dict(orient='records')
+    current_year = int(datetime.now().year)
+    for series in nascar_series:
+        drvavg_series_id = series.get('drvavg_series_id')
+        series_first_year = int(series.get('first_year'))
+        for year in range(series_first_year, current_year+1):
+            for race_no in range(1, MAX_RACE_NO):
+                sked_id:str = f"{year}{drvavg_series_id}{str(race_no).zfill(2)}"
+                if len(sked_id) != 7:
+                    raise ValueError(f"Invalid sked_id generated: {sked_id}")
                 sked_ids.append(int(sked_id))
     return sked_ids
+
+
 
 
 def get_race_results(sked_id:int) -> pd.DataFrame:
     logger.info(f"Processing sked_id: {sked_id}")
     try:
-        # if sked_id not in existing_sked_ids:
-            series_number = int(str(sked_id)[4])
-            match series_number:
-                case 0:
-                    series = 'nascar'
-                case 5:
-                    series = 'nascar_xfinityseries'
-                case 7:
-                    series = 'nascar_truckseries'
-                case _:
-                    series = None
-            current_year = int(str(sked_id)[0:4])
-            race_number = int(str(sked_id)[5:6])
-            url = BASE_URL + '/'+series+'/race.php?sked_id='+str(sked_id)
-            response = requests.get(url, working_proxy)
-            soup = BeautifulSoup(response.content, 'html.parser')
-            tables = soup.find_all('table', {'class': 'sortable tabledata-nascar table-large'}, limit=1)
-            if not tables:
-                logger.debug(f"No race found for sked_id: {sked_id} @ url: {url}")
-                return None
-            table = tables[0]
-   
+        sked_info = get_sked_info(sked_id)
+        series_info = get_series_info(sked_info['series_id'])
 
-            headers = [th.text.strip() for th in table.find('tr').find_all('th')]
-            rows = []
-            for row in table.find_all('tr')[1:]:
-                cells = [td.text.strip() for td in row.find_all('td')]
-                rows.append(cells)
-            table_data = [dict(zip(headers, row)) for row in rows]
-            event_info_html = soup.find("div", {"class": "sub-banner-box"})
-            event_name = event_info_html.find("h3").text
-            event_info_details = event_info_html.find("p").text.split("\n")
-            track = event_info_details[0].replace("Race Track: ", "")
-            date = datetime.strptime(event_info_details[1].replace("Date: ", ""), "%A, %B %d, %Y")
-            event_info = event_info_details[2].strip()
-            result_data = [{
-            'sked_id': sked_id,
-                'year': current_year,
-                'series': series,
-                'race_no': race_number,
-                'event_name': event_name,
-                'track': track,
-                'date': date,
-                'event_info': event_info,
-                'finish': row.get('Finish'),
-                'start': row.get('Start'),
-                'car_no': row.get('#'),
-                'driver_name': row.get('Driver'),
-                'make': row.get('Make'),
-                'pts': row.get('Pts'),
-                'laps': row.get('Laps'),
-                'laps_led': row.get('Led'),
-                'status': row.get('Status'),
-                'team': row.get('Team'),
-                'stage_1': row.get('S1'),
-                'stage_2': row.get('S2'),
-                'stage_3': row.get('S3'),
-                'rating': row.get('Rating')
-            } for row in table_data]
-            df = pd.DataFrame(result_data)
-            with get_connection() as conn:
-                df.to_sql('race_result', conn, schema='api', if_exists='append', index=False)
-            return df
+        drvavg_series_text_id = series_info.get("drvavg_series_text_id")
+        year = sked_info['year']
+        race_no = sked_info['race_no']
+        series_id = sked_info['series_id']
+
+        url = BASE_URL + '/'+drvavg_series_text_id+'/race.php?sked_id='+str(sked_id)
+        response = requests.get(url, working_proxy)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        tables = soup.find_all('table', {'class': 'sortable tabledata-nascar table-large'}, limit=1)
+        if not tables:
+            logger.debug(f"No race found for sked_id: {sked_id} @ url: {url}")
+            return None
+        table = tables[0]
+
+        headers = [th.text.strip() for th in table.find('tr').find_all('th')]
+        rows = []
+        for row in table.find_all('tr')[1:]:
+            cells = [td.text.strip() for td in row.find_all('td')]
+            rows.append(cells)
+        table_data = [dict(zip(headers, row)) for row in rows]
+        event_info_html = soup.find("div", {"class": "sub-banner-box"})
+        event_name = event_info_html.find("h3").text
+        event_info_details = event_info_html.find("p").text.split("\n")
+        track = event_info_details[0].replace("Race Track: ", "")
+        date = datetime.strptime(event_info_details[1].replace("Date: ", ""), "%A, %B %d, %Y")
+        event_info = event_info_details[2].strip()
+        
+        result_data = [{
+        'sked_id': sked_id,
+            'year': year,
+            'series_id': series_id,
+            'race_no': race_no,
+            'event_name': event_name,
+            'track': track,
+            'date': date,
+            'event_info': event_info,
+            'finish': row.get('Finish'),
+            'start': row.get('Start'),
+            'car_no': row.get('#'),
+            'driver_name': row.get('Driver'),
+            'make': row.get('Make'),
+            'pts': row.get('Pts'),
+            'laps': row.get('Laps'),
+            'laps_led': row.get('Led'),
+            'status': row.get('Status'),
+            'team': row.get('Team'),
+            'stage_1': row.get('S1'),
+            'stage_2': row.get('S2'),
+            'stage_3': row.get('S3'),
+            'rating': row.get('Rating')
+        } for row in table_data]
+        df = pd.DataFrame(result_data)
+        with get_connection() as conn:
+            df.to_sql('race_result', conn, schema='api', if_exists='append', index=False)
+        return df
     except Exception as e:
-        url = BASE_URL + '/'+series+'/race.php?sked_id='+str(sked_id)
+        url = BASE_URL + '/'+drvavg_series_text_id+'/race.php?sked_id='+str(sked_id)
         logger.debug(url, e)
 
 

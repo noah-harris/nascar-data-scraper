@@ -6,21 +6,6 @@ MAX_DRV_ID = 4400
 MAX_TEAM_NOW = 3000
 MAX_RACE_NO = 99
 
-nascar_series = {
-    'cup': {
-        'name': 'nascar', 
-        'first_year': '1950', 
-        'series_index': '0'},
-    'xfinity': {
-        'name': 'nascar_xfinityseries', 
-        'first_year': '1982', 
-        'series_index': '5'},
-    'truck': {
-        'name': 'nascar_truckseries', 
-        'first_year': '1995', 
-        'series_index': '7'}
-        }
-
 from get_proxy import working_proxy
 
 import logging
