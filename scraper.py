@@ -26,6 +26,11 @@ def get_sked_ids() -> list:
             for race_no in range(1, 100):
                 sked_id:int = int(f"{year}{drvavg_series_id}{str(race_no).zfill(2)}")
                 sked_ids.append(sked_id)
+
+        if drvavg_series_id == 0:
+            for race_no in range(1, 20):
+                sked_id:int = int(f"{year}1{str(race_no).zfill(2)}")
+                sked_ids.append(sked_id)
     return sked_ids
 
 
