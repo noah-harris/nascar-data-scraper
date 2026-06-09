@@ -2,7 +2,7 @@ CREATE TABLE [drvavg].[race_result](
 	[sked_id] INT,
 	[year] INT,
 	[drvavg_series_id] INT,
-	[race_no] NVARCHAR(25),
+	[race_no] INT,
 	[event_name] NVARCHAR(MAX),
 	[track] NVARCHAR(50),
 	[date] NVARCHAR(50),
@@ -19,7 +19,6 @@ CREATE TABLE [drvavg].[race_result](
 	[team] NVARCHAR(50),
 	[stage_1] INT,
 	[stage_2] INT,
-	[stage_3] INT,
 	[rating] DECIMAL(20,4)
 );
 

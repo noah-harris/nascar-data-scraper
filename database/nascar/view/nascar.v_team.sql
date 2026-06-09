@@ -1,6 +1,5 @@
 CREATE VIEW [nascar].[v_team] 
 	AS 
-SELECT 
-* 
+SELECT * 
 FROM [drvavg].[team]
-WHERE [name] <> ''
+WHERE [name] <> '' 

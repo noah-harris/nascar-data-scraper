@@ -1,9 +1,9 @@
 BASE_URL = 'https://www.driveraverages.com'
 
-MAX_TRK_ID = 220
-MAX_CARNO_ID = 566
-MAX_DRV_ID = 4400
-MAX_TEAM_NOW = 3000
+MAX_TRK_ID = 300
+MAX_CARNO_ID = 1000
+MAX_DRV_ID = 5000
+MAX_TEAM_NOW = 4000
 MAX_RACE_NO = 99
 
 from get_proxy import working_proxy

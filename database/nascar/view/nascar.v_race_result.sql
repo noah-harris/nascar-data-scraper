@@ -4,10 +4,10 @@ WITH [CTE_race_result_clean] AS (
     SELECT	
         [sked_id],
         [year],
-        [series],
+        [drvavg_series_id],
         CAST([race_no] AS INT) AS [race_no],
-        REPLACE([event_name], '&amp;', '&') AS [event_name],
-        REPLACE([track], '&amp;', '&') AS [track],
+        [event_name],
+        [track],
         CAST([date] AS DATE) AS [date],
         [event_info],
         [finish], 
@@ -42,7 +42,6 @@ WITH [CTE_race_result_clean] AS (
         AS [team], 
         ISNULL([stage_1], 0) AS [stage_1], 
         ISNULL([stage_2], 0) AS [stage_2], 
-        ISNULL([stage_3], 0) AS [stage_3], 
         CASE 
             WHEN [rating] = 0.0 THEN NULL 
             ELSE [rating]
@@ -52,9 +51,12 @@ WITH [CTE_race_result_clean] AS (
     WHERE 1=1 
         AND CAST([date] AS DATE) <> '1900-01-01'
 )
-SELECT 
-    *
-FROM [CTE_race_result_clean]
+SELECT *
+FROM [CTE_race_result_clean] AS rr
+LEFT JOIN [nascar].[v_track] AS t 
+ON 1=1 
+    AND t.[name] = rr.[track]
+    AND rr.[date] BETWEEN t.[start_date] AND t.[end_date]
 
 /*
 CREATE OR ALTER VIEW [data].[v_result_info]
@@ -76,7 +78,6 @@ SELECT DISTINCT
 	[status], 
 	[stage_1], 
 	[stage_2], 
-	[stage_3], 
 	[rating],
 	e.[start_elo],
 	e.[end_elo],
@@ -105,7 +106,6 @@ SELECT DISTINCT
 	[status], 
 	[stage_1], 
 	[stage_2], 
-	[stage_3], 
 	[rating]
 FROM [data].[v_race_result] AS rr
 LEFT JOIN [api].[car_number] AS cn ON cn.[car_number] = rr.[car_no]

@@ -1,5 +1,5 @@
 CREATE TABLE [drvavg].[car_number] (
 	[carno_id] INT,
-	[car_number] VARCHAR(10),
-	PRIMARY KEY([carno_id])
-	)
+	[car_number] VARCHAR(20),
+	CONSTRAINT [PK_car_number] PRIMARY KEY NONCLUSTERED ([carno_id])
+)

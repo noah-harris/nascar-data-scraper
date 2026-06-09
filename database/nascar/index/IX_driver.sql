@@ -1,0 +1,1 @@
+CREATE CLUSTERED INDEX [IX_driver] ON [drvavg].[driver]([name]);

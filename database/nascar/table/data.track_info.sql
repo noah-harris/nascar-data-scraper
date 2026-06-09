@@ -9,5 +9,6 @@ CREATE TABLE [data].[track_info] (
 	[start_date] DATE,
 	[end_date] DATE,
 	[longitude] DECIMAL(10,6),
-	[latitude] DECIMAL(10,6)
-	);
+	[latitude] DECIMAL(10,6),
+	CONSTRAINT [PK_track_info] PRIMARY KEY NONCLUSTERED ([trk_id], [start_date])
+);

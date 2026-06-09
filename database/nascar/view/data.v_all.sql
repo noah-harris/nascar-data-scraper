@@ -37,7 +37,6 @@
 -- 	r.[pts],
 -- 	r.[stage_1],
 -- 	r.[stage_2],
--- 	r.[stage_3],
 -- 	r.[rating],
 -- 	r.[start_elo],
 -- 	r.[end_elo],

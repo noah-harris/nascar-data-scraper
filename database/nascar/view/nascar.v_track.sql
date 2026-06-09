@@ -15,7 +15,3 @@ SELECT
 FROM [drvavg].[track] AS t
 LEFT JOIN [data].[track_info] AS ti ON ti.[trk_id] = t.[trk_id]
 LEFT JOIN [drvavg].[track_type] AS tt ON ti.[trk_type_id] = tt.[trk_type_id]
-WHERE 1=1 
-    AND t.[name] <> 'NASCAR Race Statistics at'
-
-
