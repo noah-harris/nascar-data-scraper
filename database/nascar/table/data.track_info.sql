@@ -10,5 +10,6 @@ CREATE TABLE [data].[track_info] (
 	[end_date] DATE,
 	[longitude] DECIMAL(10,6),
 	[latitude] DECIMAL(10,6),
-	CONSTRAINT [PK_track_info] PRIMARY KEY NONCLUSTERED ([trk_id], [start_date])
+	CONSTRAINT [PK_track_info] PRIMARY KEY NONCLUSTERED ([trk_id], [start_date]),
+	CONSTRAINT [CK_track_info_dates] CHECK ([start_date] <= [end_date])
 );

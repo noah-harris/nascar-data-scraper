@@ -9,7 +9,7 @@ CREATE TABLE [drvavg].[race_result](
 	[event_info] NVARCHAR(MAX),
 	[finish] INT,
 	[start] INT,
-	[car_no] NVARCHAR(5),
+	[car_no] NVARCHAR(50),
 	[driver_name] NVARCHAR(50),
 	[make] NVARCHAR(25),
 	[pts] INT,
@@ -21,6 +21,3 @@ CREATE TABLE [drvavg].[race_result](
 	[stage_2] INT,
 	[rating] DECIMAL(20,4)
 );
-
-
-

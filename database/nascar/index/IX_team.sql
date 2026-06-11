@@ -1,0 +1,1 @@
+CREATE NONCLUSTERED INDEX [IX_team] ON [drvavg].[team]([name]) INCLUDE ([team_now]);

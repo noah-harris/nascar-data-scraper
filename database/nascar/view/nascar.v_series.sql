@@ -2,6 +2,7 @@ CREATE VIEW [nascar].[v_series]
     AS
 SELECT
     sn.[drvavg_series_id],
+    s.[drvavg_series_text_id],
     sn.[series_name],
     cg.[generation_name],
     CASE
@@ -13,6 +14,7 @@ SELECT
         ELSE cg.[end_date]
     END AS [end_date]
 FROM [drvavg].[series_name] AS sn
+LEFT JOIN [drvavg].[series] AS s ON s.[drvavg_series_id] = sn.[drvavg_series_id]
 LEFT JOIN [drvavg].[car_generation] AS cg
 ON 1=1
     AND sn.[drvavg_series_id] = cg.[drvavg_series_id]
