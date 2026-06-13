@@ -8,7 +8,7 @@ SELECT
     tm.[team_now],
     rrc.[start],
     rrc.[finish], 
-    rrc.[finish] - rrc.[start] AS [position_delta],
+    rrc.[start] -rrc.[finish] AS [position_delta],
     rrc.[make], 
     rrc.[pts], 
     rrc.[laps], 

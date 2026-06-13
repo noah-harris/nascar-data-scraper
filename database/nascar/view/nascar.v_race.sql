@@ -34,6 +34,7 @@ SELECT
     [track_type],
     [length],
     (SELECT COUNT(DISTINCT rr.[carno_id]) FROM [nascar].[v_race_result] AS rr WHERE rr.[sked_id] = rcc.[sked_id]) AS [entries],
+    (SELECT COUNT(DISTINCT rr.[carno_id]) FROM [nascar].[v_race_result] AS rr WHERE rr.[sked_id] = rcc.[sked_id] AND ISNULL(rr.[start], 0) = 0) AS [nonstarting_entries],
     (SELECT MAX([laps]) FROM [nascar].[v_race_result] AS rr WHERE rr.[sked_id] = rcc.[sked_id]) AS [laps],
     CAST((SELECT MAX([laps])*1.0 FROM [nascar].[v_race_result] AS rr WHERE rr.[sked_id] = rcc.[sked_id])* [length] AS DECIMAL(20,0)) AS [distance],
     (SELECT rr.[drv_id] FROM [nascar].[v_race_result] AS rr WHERE rr.[sked_id] = rcc.[sked_id] AND rr.[finish] = 1) AS [winner]
