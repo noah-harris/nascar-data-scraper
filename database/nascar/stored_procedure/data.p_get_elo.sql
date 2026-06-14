@@ -1,4 +1,4 @@
-CREATE PROCEDURE [data].[p_get_elo]
+CREATE PROCEDURE [elo].[p_calculate]
 AS
 SET NOCOUNT ON
 
@@ -72,69 +72,69 @@ BEGIN
 
 	DROP TABLE IF EXISTS #data_elo_calc
 	SELECT 
-		self.[sked_id], 
-		self.[drv_id] AS [self_drv_id],
-		self.[finish] AS [self_finish],
-		self.[start_elo] AS [self_start_elo], 
-		self.[start],
-		((@field_size-(@nonstarting/2)/2.0)-[self].[finish])/(100.0) AS [fudge_factor_self],
+		n.[sked_id], 
+		n.[drv_id],
+		n.[finish],
+		n.[start_elo], 
+		n.[start],
+		((@field_size-(@nonstarting/2)/2.0)-n.[finish])/(100.0) AS [fudge_factor],
 		(
-			(1-EXP(-[self].[start_elo]/@coef)) * EXP(-[comp].[start_elo]/@coef)
+			(1-EXP(-n.[start_elo]/@coef)) * EXP(-f.[start_elo]/@coef)
 		)
 			/
 		( 
 			(
-				(1-EXP(-[comp].[start_elo]/@coef)) * EXP(-[self].[start_elo]/@coef)
+				(1-EXP(-f.[start_elo]/@coef)) * EXP(-n.[start_elo]/@coef)
 			) 
 				+ 
 			( 
-				(1-EXP(-[self].[start_elo]/@coef)) * EXP(-[comp].[start_elo]/@coef)
+				(1-EXP(-n.[start_elo]/@coef)) * EXP(-f.[start_elo]/@coef)
 			)
-		) AS [mu_nm]
+		) AS [expected_score_nf]
 	INTO #data_elo_calc
-	FROM [data].[elo] AS [self]
-	LEFT JOIN [data].[elo] AS [comp] ON [self].[sked_id] = [comp].[sked_id] 
-	WHERE [self].[sked_id] = @current_sked_id
-
-
+	FROM [data].[elo] AS n
+	LEFT JOIN [data].[elo] AS f ON n.[sked_id] = f.[sked_id] 
+	WHERE n.[sked_id] = @current_sked_id
 
 	DROP TABLE IF EXISTS #elo_calc
 	SELECT 
 		[sked_id],
-		[self_drv_id] AS [drv_id],
-		[self_finish] AS [finish],
-		[fudge_factor_self] AS [fudge_factor],
-		SUM([mu_nm])-0.5 AS [expected_score],
+		[drv_id],
+		[finish],
+		[fudge_factor],
+		SUM([expected_score_nf])-0.5 AS [expected_score_n],
 		CASE
-			WHEN [start] = 0 THEN (SUM([mu_nm])-0.5)
-			ELSE ((@field_size - [self_finish] - (SUM([mu_nm])-0.5) - [fudge_factor_self])*200)/((@field_size-@nonstarting) + CASE WHEN @field_size = @nonstarting THEN 0.00000001 ELSE 0.0 END)
-		END AS [elo_delta]
+			WHEN [start] = 0 THEN (SUM([expected_score_nf])-0.5)
+			ELSE ((@field_size - [finish] - (SUM([expected_score_nf])-0.5) - [fudge_factor])*200)/((@field_size-@nonstarting) + CASE WHEN @field_size = @nonstarting THEN 0.00000001 ELSE 0.0 END)
+		END AS [elo_delta],
+		EXP(-[start_elo]/@alpha) AS [strength]
 	INTO #elo_calc
 	FROM #data_elo_calc
-	GROUP BY [sked_id], [self_drv_id], [self_finish], [fudge_factor_self], [start]
+	GROUP BY [sked_id], [drv_id], [start], [finish], [fudge_factor], [start_elo]
 
 	/* Update elos */
 	-- Current race end elo
 
-	UPDATE [elo] 
+	UPDATE e
 	-- Restrict elos to greater than 0.
-	SET [elo].[end_elo] = CASE WHEN [elo].[start_elo] + [elo_delta].[elo_delta] <= 1 THEN 1 ELSE [elo].[start_elo] + [elo_delta].[elo_delta] END
-	FROM [data].[elo] AS [elo]
-	LEFT JOIN #elo_calc AS [elo_delta]
+	SET e.[end_elo] = CASE WHEN e.[start_elo] + d.[elo_delta] <= 1 THEN 1 ELSE e.[start_elo] + d.[elo_delta] END
+	FROM [data].[elo] AS e
+	LEFT JOIN #elo_calc AS d
 	ON 1=1 
-		AND [elo].[sked_id] = [elo_delta].[sked_id] 
-		AND [elo].[drv_id] = [elo_delta].[drv_id]
-	WHERE [elo].[sked_id] = @current_sked_id
+		AND e.[sked_id] = d.[sked_id] 
+		AND e.[drv_id] = d.[drv_id]
+	WHERE e.[sked_id] = @current_sked_id
 
 	-- Next race start elo
-	UPDATE [elo] 
-	SET [elo].[start_elo] = [set_start_elo].[end_elo]
-	FROM [data].[elo] AS [elo] 
-	LEFT JOIN [data].[elo] AS [set_start_elo]
+	UPDATE e
+	SET e.[start_elo] = s.[end_elo]
+	FROM [data].[elo] AS e
+	LEFT JOIN [data].[elo] AS s
 	ON 1=1 
-		AND [elo].[last_sked_id] = [set_start_elo].[sked_id]
-		AND [elo].[drv_id] = [set_start_elo].[drv_id]
-	WHERE [set_start_elo].[sked_id] = @current_sked_id
+		AND e.[last_sked_id] = s.[sked_id]
+		AND e.[drv_id] = s.[drv_id]
+	WHERE s.[sked_id] = @current_sked_id
+
 
 	FETCH NEXT FROM [sked_ids] INTO @current_sked_id
 END
