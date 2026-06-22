@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import random
 from config import BASE_URL
 
+HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"}
+
 # URL to fetch free proxies
 proxy_list_url = "https://www.sslproxies.org/"
 
@@ -34,7 +36,7 @@ def get_working_proxy(proxies:list, test_url):
         }
         try:
             # Test the proxy with the target URL
-            response = requests.get(test_url, proxies=proxies_dict, timeout=5)
+            response = requests.get(test_url, proxies=proxies_dict, timeout=5, headers=HEADERS)
             if response.status_code == 200:
                 return proxies_dict
         except:
@@ -43,3 +45,4 @@ def get_working_proxy(proxies:list, test_url):
 
 proxies = get_proxies()
 working_proxy = get_working_proxy(proxies, BASE_URL)
+print(f"Working proxy: {working_proxy}")

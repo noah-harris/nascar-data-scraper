@@ -1,0 +1,1 @@
+CREATE NONCLUSTERED INDEX [IX_track_info] ON [data].[track_info]([trk_id]) INCLUDE ([name], [trk_type_id], [length], [start_date], [end_date]);

@@ -1,0 +1,1 @@
+CREATE NONCLUSTERED INDEX [IX_driver_info] ON [data].[driver_info]([drv_id]) INCLUDE ([name], [birthday], [deathday], [birthplace], [source]);

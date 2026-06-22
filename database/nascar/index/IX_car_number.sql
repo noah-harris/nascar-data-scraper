@@ -1,0 +1,1 @@
+CREATE CLUSTERED INDEX [IX_car_number] ON [drvavg].[car_number]([car_number]);

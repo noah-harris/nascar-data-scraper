@@ -1,0 +1,1 @@
+CREATE CLUSTERED INDEX [IX_track] ON [drvavg].[track]([name]);
