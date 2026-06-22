@@ -1,1 +1,0 @@
-CREATE CLUSTERED INDEX [IX_race_results] ON [drvavg].[race_result]([sked_id]);

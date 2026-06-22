@@ -1,1 +1,1 @@
-CREATE NONCLUSTERED INDEX [IX_elo_sked_drv] ON [data].[elo]([sked_id], [drv_id]) INCLUDE ([drvavg_series_id], [finish], [start_elo], [end_elo]);
+CREATE NONCLUSTERED INDEX [IX_elo_sked_drv] ON [elo].[race_results_calc]([sked_id], [drv_id]) INCLUDE ([finish], [start_elo], [end_elo]);

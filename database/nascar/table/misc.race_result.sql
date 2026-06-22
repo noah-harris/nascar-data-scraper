@@ -1,5 +1,12 @@
-CREATE TABLE [drvavg].[race_result](
+CREATE TABLE [misc].[race_result](
 	[sked_id] INT,
+	[year] INT,
+	[drvavg_series_id] INT,
+	[race_no] INT,
+	[event_name] NVARCHAR(MAX),
+	[track] NVARCHAR(50),
+	[date] NVARCHAR(50),
+	[event_info] NVARCHAR(MAX),
 	[finish] INT,
 	[start] INT,
 	[car_no] NVARCHAR(50),
@@ -12,7 +19,5 @@ CREATE TABLE [drvavg].[race_result](
 	[team] NVARCHAR(50),
 	[stage_1] INT,
 	[stage_2] INT,
-	[rating] DECIMAL(20,4),
-	PRIMARY KEY CLUSTERED ([sked_id], [finish]),
-	CONSTRAINT [FK_race_result_race] FOREIGN KEY ([sked_id]) REFERENCES [drvavg].[race]([sked_id])
+	[rating] DECIMAL(20,4)
 );
